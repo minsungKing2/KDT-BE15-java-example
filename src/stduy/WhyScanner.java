@@ -1,3 +1,5 @@
+package stduy;
+
 import java.util.Scanner;
 
 public class WhyScanner {
