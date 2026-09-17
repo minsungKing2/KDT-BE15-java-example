@@ -14,7 +14,18 @@ public class PostDemo {
 
         Post post2 = new Post();
 
-        System.out.println("post2.title = " + post2.title);
+        post.print();
+        post1.print();
+
+        System.out.println(post.plusTitle());
+        post.printArg("arg print test");
+        post.addBody(" 크림");
+
+        post.addTitle("1", "2");
+        post.addTitle("1", 200);
+
+        post.test("good!");
+
 
     }
 
