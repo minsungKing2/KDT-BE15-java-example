@@ -30,10 +30,11 @@ public class Student {
     }
 
     public void printInfo() {
-        System.out.print("번호 : " + no);
-        System.out.print("/ 이름 : " + name);
-        System.out.print("/ 과목 : " + subject);
-        System.out.print("/ 점수 : " + score);
+        System.out.print("번호 : " + no + " ");
+        System.out.print("이름 : " + name + " ");
+        System.out.print("과목 : " + subject + " ");
+        System.out.print("점수 : " + score + " ");
+        System.out.println();
     }
 
 }
