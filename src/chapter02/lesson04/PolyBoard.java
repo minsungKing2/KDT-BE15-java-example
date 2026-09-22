@@ -3,11 +3,10 @@ package chapter02.lesson04;
 import java.util.ArrayList;
 
 public class PolyBoard {
-
     public static void printAll(ArrayList<Post> posts) {
-        for (int i = 0; i < posts.size(); i++) {
-            posts.get(i).print();
-            System.out.println();
+        for (Post post : posts) {
+            post.print();
+            System.out.println("---");
         }
     }
 

@@ -10,7 +10,7 @@ public class NoticePost extends Post {
 
     @Override
     public void print() {
-        super.print();
         System.out.println("place=" + place);
+        super.print();
     }
 }
