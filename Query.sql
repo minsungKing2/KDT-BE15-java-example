@@ -131,7 +131,7 @@ FROM project_team;
 DELETE FROM project_team
 WHERE id = 1;
 
-# 7. 삭제 결과로 오류 코드 1451이 발생하는지 확인합니다. 오류가 발생한 뒤 팀 수를 after_count로 다시 조회합니다.
+# 7. 삭제 결과로 오류 코드 1451이 발생하는지 확인합니다. 오류가 발생한 g뒤 팀 수를 after_count로 다시 조회합니다.
 SELECT COUNT(*) AS after_count
 FROM project_team;
 
@@ -139,3 +139,21 @@ FROM project_team;
 SELECT *
 FROM project_team
 WHERE team_code in ('backend');
+
+SELECT id, title
+FROM post
+WHERE title LIKE 'k%'; # % - 0개 이상의 문자, _ - 정확히 한 문자
+
+# id가 3이고, body에 문자 c가 들어갔다면 조회
+SELECT *
+FROM post
+WHERE id = 3 AND body LIKE '%c%';
+
+INSERT INTO post (member_id, title, body) VALUES (1, 'exam', 'bring id');
+INSERT INTO post (member_id, title, body) VALUES (1, 'kimbap', 'sold out');
+INSERT INTO post (member_id, title, body) VALUES (1, 'drill', 'one');
+INSERT INTO post (member_id, title, body) VALUES (1, 'drill', 'two');
+
+SELECT * FROM post WHERE title LIKE 'd%';
+
+SELECT id, title FROM post ORDER BY title DESC LIMIT 5;
