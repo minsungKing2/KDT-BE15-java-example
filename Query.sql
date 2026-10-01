@@ -353,3 +353,43 @@ LIMIT 2;
 #      )
 # ORDER BY FOOD_TYPE DESC;
 
+DROP TABLE IF EXISTS tray;
+DROP TABLE IF EXISTS jdbc_post;
+DROP TABLE IF EXISTS jdbc_member;
+
+CREATE TABLE jdbc_member
+(
+    id       INT         NOT NULL AUTO_INCREMENT,
+    login_id VARCHAR(20) NOT NULL,
+    nickname VARCHAR(20),
+    PRIMARY KEY (id),
+    UNIQUE (login_id)
+) ENGINE = INNODB;
+
+CREATE TABLE jdbc_post
+(
+    id        INT         NOT NULL AUTO_INCREMENT,
+    member_id INT         NOT NULL,
+    title     VARCHAR(40) NOT NULL,
+    body      VARCHAR(200),
+    PRIMARY KEY (id),
+    INDEX idx_jdbc_member_id (member_id),
+    FOREIGN KEY (member_id) REFERENCES jdbc_member (id)
+) ENGINE = INNODB;
+
+INSERT INTO jdbc_member (login_id, nickname)
+VALUES ('jdbc01', 'kim'),
+       ('jdbc02', 'lee');
+
+INSERT INTO jdbc_post (member_id, title, body)
+VALUES (1, 'closed', 'no class'),
+       (1, 'kimbap', 'sold out'),
+       (2, 'opened', 'done');
+
+SELECT id, login_id, nickname
+FROM jdbc_member
+ORDER BY id;
+
+SELECT id, member_id, title, body
+FROM jdbc_post
+ORDER BY id;
