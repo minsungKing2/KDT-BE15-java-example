@@ -17,19 +17,21 @@ SELECT item, shelf
 FROM desk
 WHERE note = 'hot';
 
-ALTER TABLE desk ADD opened_at DATETIME;
+ALTER TABLE desk
+    ADD opened_at DATETIME;
 
 INSERT INTO desk (item, desk.opened_at)
 VALUES ('lunch', '2026-09-30 10:45:00');
 
-SELECT * FROM desk;
+SELECT *
+FROM desk;
 
 # 3. 과제 - 1
 USE kdt;
 
 CREATE TABLE project_team
 (
-    id Int NOT NULL AUTO_INCREMENT,
+    id        Int         NOT NULL AUTO_INCREMENT,
     team_code VARCHAR(20) NOT NULL,
     team_name VARCHAR(30) NOT NULL,
     opened_at DATETIME,
@@ -39,12 +41,12 @@ CREATE TABLE project_team
 
 CREATE TABLE project_application
 (
-    id INT AUTO_INCREMENT NOT NULL,
-    team_id INT NOT NULL,
-    applicant VARCHAR(20) NOT NULL,
+    id         INT AUTO_INCREMENT NOT NULL,
+    team_id    INT                NOT NULL,
+    applicant  VARCHAR(20)        NOT NULL,
     applied_at DATETIME,
     PRIMARY KEY (id),
-    FOREIGN KEY (team_id) REFERENCES project_team(id)
+    FOREIGN KEY (team_id) REFERENCES project_team (id)
 );
 
 DESCRIBE project_team;
@@ -82,7 +84,8 @@ VALUES (2, '지수', '2026-11-02 20:00:00');
 SELECT COUNT(*) AS 신청수
 FROM project_application;
 
-SELECT * FROM project_application;
+SELECT *
+FROM project_application;
 
 # 오류 발생
 INSERT INTO project_application (team_id, applicant, applied_at)
@@ -128,7 +131,8 @@ SELECT COUNT(*) AS before_count
 FROM project_team;
 
 # 1451 에러 -> Why? 부모 테이블에서 참조중이기 때문에 에러 발생.
-DELETE FROM project_team
+DELETE
+FROM project_team
 WHERE id = 1;
 
 # 7. 삭제 결과로 오류 코드 1451이 발생하는지 확인합니다. 오류가 발생한 g뒤 팀 수를 after_count로 다시 조회합니다.
@@ -142,18 +146,210 @@ WHERE team_code in ('backend');
 
 SELECT id, title
 FROM post
-WHERE title LIKE 'k%'; # % - 0개 이상의 문자, _ - 정확히 한 문자
+WHERE title LIKE 'k%';
+# % - 0개 이상의 문자, _ - 정확히 한 문자
 
 # id가 3이고, body에 문자 c가 들어갔다면 조회
 SELECT *
 FROM post
-WHERE id = 3 AND body LIKE '%c%';
+WHERE id = 3
+  AND body LIKE '%c%';
 
-INSERT INTO post (member_id, title, body) VALUES (1, 'exam', 'bring id');
-INSERT INTO post (member_id, title, body) VALUES (1, 'kimbap', 'sold out');
-INSERT INTO post (member_id, title, body) VALUES (1, 'drill', 'one');
-INSERT INTO post (member_id, title, body) VALUES (1, 'drill', 'two');
+INSERT INTO post (member_id, title, body)
+VALUES (1, 'exam', 'bring id');
+INSERT INTO post (member_id, title, body)
+VALUES (1, 'kimbap', 'sold out');
+INSERT INTO post (member_id, title, body)
+VALUES (1, 'drill', 'one');
+INSERT INTO post (member_id, title, body)
+VALUES (1, 'drill', 'two');
 
-SELECT * FROM post WHERE title LIKE 'd%';
+SELECT *
+FROM post
+WHERE title LIKE 'd%';
 
-SELECT id, title FROM post ORDER BY title DESC LIMIT 5;
+SELECT id, title
+FROM post
+ORDER BY title DESC
+LIMIT 5;
+
+# 2026-10-01 db 실습 예제
+# 프로그래머스 MySQL 코딩테스트 문제 - 흉부외과 또는 일반외과 의사 목록 출력하기
+# SELECT DR_NAME, DR_ID, MCDP_CD, HIRE_YMD
+# FROM DOCTOR
+# WHERE MCDP_CD IN('CS', 'GS') 혹은 WHERE MCDP_CD = 'CS' OR MCDP_CD = 'GS'
+# ORDER BY HIRE_YMD DESC, DR_NAME ASC;
+
+# IS NULL, IS NOT NULL
+SELECT *
+FROM member
+WHERE nickname IS NOT NULL;
+
+INSERT INTO member (login_id)
+VALUES ('kdt09');
+
+SELECT *
+FROM member
+WHERE nickname IS NULL;
+
+# DDL - Data Definition Language, 데이터 정의어 (CREATE, ALTER, DROP, TRUNCATE)
+# DML - Data Manipulation Language, 데이터 조작어 (SELECT, INSERT, UPDATE, DELETE)
+# DCL - Data Control Language, 데이터 제어어 (GRANT, REVOKE)
+# TCL - 트랜잭션 제어어, COMMIT/ROLLBACK
+
+# UPDATE 테이블명 SET 변경문 WHERE 조건문
+SELECT id, title, body
+FROM post
+WHERE title = 'drill';
+
+UPDATE post
+SET body = 'kept'
+WHERE body = 'one';
+
+SELECT *
+FROM post
+WHERE title = 'drill';
+
+# 멱등성 - 멱등성(Idempotency)은 연산을 여러 번 수행하든 한 번 수행하든 결과가 똑같이 유지되는 성질
+# create - 경우에 따라 멱등성이 있을 수도 있고, 없을 수도 있음.
+# read, delete - 멱등성 있음.
+# update - 대부분 멱등적이지만, 멱등성이 없는 경우도 있음.
+
+# JOIN - 두 테이블을 하나의 테이블로 만듦.
+# INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL JOIN
+
+SELECT m.login_id, p.title, p.body
+FROM member AS m
+         INNER JOIN post AS p ON m.id = p.member_id
+WHERE p.title = 'closed';
+
+
+# 집계 함수 - COUNT()
+SELECT member_id, COUNT(*) AS post_cnt
+FROM post
+GROUP BY member_id;
+
+SELECT post.title, COUNT(*) as post_cnt
+FROM post
+GROUP BY title;
+
+SELECT m.login_id, COUNT(*) AS post_cnt
+FROM member AS m
+         INNER JOIN post AS p ON m.id = p.member_id
+GROUP BY m.login_id;
+
+
+SELECT *
+FROM post
+         JOIN cafe;
+
+SELECT post.member_id, COUNT(*)
+FROM post
+GROUP BY member_id
+HAVING COUNT(*) >= 2;
+
+# SQL 순서
+# SELECT
+# FROM
+# WHERE
+# GROUP BY
+# HAVING
+# ORDER BY
+# LIMIT
+# FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY -> LIMIT 순으로 읽는다.
+
+# 프로그래머스 db 코딩테스트 있었는데요 없었습니다
+# SELECT I.ANIMAL_ID, O.NAME
+# FROM ANIMAL_INS AS I
+# INNER JOIN ANIMAL_OUTS AS O
+# ON I.ANIMAL_ID = O.ANIMAL_ID
+# WHERE I.DATETIME > O.DATETIME
+# ORDER BY I.DATETIME ASC;
+
+# DB 실습 문제
+# 일반 RDB에서는 USER라는 예약키워드가 있어서 백틱(`)으로 생성합니다.
+CREATE TABLE `USER`
+(
+    USER_ID   INTEGER     NOT NULL,
+    USER_NAME VARCHAR(20) NOT NULL,
+    JOIN_DATE DATE        NOT NULL,
+    PRIMARY KEY (USER_ID)
+);
+
+CREATE TABLE PURCHASE
+(
+    PURCHASE_ID   INTEGER NOT NULL,
+    USER_ID       INTEGER NOT NULL,
+    PURCHASE_DATE DATE    NOT NULL,
+    PRICE         INTEGER NOT NULL,
+    PRIMARY KEY (PURCHASE_ID),
+    FOREIGN KEY (USER_ID) REFERENCES USER (USER_ID)
+);
+
+-- 1. USER 테이블 데이터 삽입
+INSERT INTO `USER` (USER_ID, USER_NAME, JOIN_DATE)
+VALUES (1, '홍길동', '2022-01-01'),
+       (2, '김철수', '2022-02-15'),
+       (3, '이영희', '2022-03-10'),
+       (4, '박민수', '2022-04-20'),
+       (5, '최지우', '2022-05-05'),
+       (6, '강감찬', '2022-06-30');
+
+-- 2. PURCHASE 테이블 데이터 삽입
+INSERT INTO PURCHASE (PURCHASE_ID, USER_ID, PURCHASE_DATE, PRICE)
+VALUES
+-- [유저 1: 홍길동] 2023년 1월에 4번 구매 (조건 통과, 1등 예상)
+(101, 1, '2023-01-05', 10000),
+(102, 1, '2023-01-10', 20000),
+(103, 1, '2023-01-15', 15000),
+(104, 1, '2023-01-20', 30000),
+
+-- [유저 2: 김철수] 2023년 1월에 3번 구매 (조건 통과, 2등 예상 - ID가 작음)
+(105, 2, '2023-01-02', 5000),
+(106, 2, '2023-01-12', 8000),
+(107, 2, '2023-01-25', 12000),
+
+-- [유저 3: 이영희] 2023년 1월에 3번 구매 (조건 통과, 3등 예상 - ID가 2보다 큼)
+(108, 3, '2023-01-03', 20000),
+(109, 3, '2023-01-18', 25000),
+(110, 3, '2023-01-28', 30000),
+
+-- [유저 4: 박민수] 2023년 1월에 2번 구매 (HAVING 조건 탈락)
+(111, 4, '2023-01-08', 10000),
+(112, 4, '2023-01-22', 15000),
+
+-- [유저 5: 최지우] 2023년 2월에 5번 구매 (WHERE 조건 탈락 - 1월이 아님)
+(113, 5, '2023-02-01', 5000),
+(114, 5, '2023-02-05', 6000),
+(115, 5, '2023-02-10', 7000),
+(116, 5, '2023-02-15', 8000),
+(117, 5, '2023-02-20', 9000),
+
+-- [유저 6: 강감찬] 2023년 1월에 3번, 2월에 2번 구매 (1월 기준 3번이므로 조건 통과, 4등 예상)
+(118, 6, '2023-01-04', 10000),
+(119, 6, '2023-01-14', 10000),
+(120, 6, '2023-01-24', 10000),
+(121, 6, '2023-02-04', 10000),
+(122, 6, '2023-02-14', 10000);
+
+SELECT U.USER_ID, U.USER_NAME, COUNT(P.PURCHASE_ID) AS PURCHASE_COUNT
+FROM USER AS U
+         INNER JOIN PURCHASE AS P
+                    ON U.USER_ID = P.USER_ID
+WHERE P.PURCHASE_DATE >= '2023-01-01'
+  AND P.PURCHASE_DATE <= '2023-01-31'
+GROUP BY U.USER_ID
+HAVING PURCHASE_COUNT >= 3
+ORDER BY PURCHASE_COUNT DESC, U.USER_ID
+LIMIT 2;
+
+# 프로그래머스 MYSQL 코딩 테스트 문제 - 즐겨찾기가 가장 많은 식당 정보 출력하기
+# SELECT FOOD_TYPE, REST_ID, REST_NAME, FAVORITES
+# FROM REST_INFO
+# WHERE (FOOD_TYPE, FAVORITES) IN
+#      (   SELECT FOOD_TYPE, MAX(FAVORITES)
+#          FROM REST_INFO
+#          GROUP BY FOOD_TYPE
+#      )
+# ORDER BY FOOD_TYPE DESC;
+
