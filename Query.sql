@@ -210,7 +210,7 @@ SELECT *
 FROM post
 WHERE title = 'drill';
 
-# 멱등성 - 멱등성(Idempotency)은 연산을 여러 번 수행하든 한 번 수행하든 결과가 똑같이 유지되는 성질
+# 멱등성 - 멱등성(Idempotency)은 연산을 여러 번 수행하든 한 번 수행하든 결과가 똑같이 유지되는 성질.
 # create - 경우에 따라 멱등성이 있을 수도 있고, 없을 수도 있음.
 # read, delete - 멱등성 있음.
 # update - 대부분 멱등적이지만, 멱등성이 없는 경우도 있음.
