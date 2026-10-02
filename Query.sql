@@ -364,7 +364,7 @@ CREATE TABLE jdbc_member
     nickname VARCHAR(20),
     PRIMARY KEY (id),
     UNIQUE (login_id)
-) ENGINE = INNODB;
+) ENGINE = INNODB; # 엔진 InnoDB 로 연결한다. 엔진 DEFAULT 는 InnoDB 다.
 
 CREATE TABLE jdbc_post
 (
@@ -375,7 +375,7 @@ CREATE TABLE jdbc_post
     PRIMARY KEY (id),
     INDEX idx_jdbc_member_id (member_id),
     FOREIGN KEY (member_id) REFERENCES jdbc_member (id)
-) ENGINE = INNODB;
+) ENGINE = INNODB; # 엔진 InnoDB 로 연결한다. 엔진 DEFAULT 는 InnoDB 다.
 
 INSERT INTO jdbc_member (login_id, nickname)
 VALUES ('jdbc01', 'kim'),
@@ -393,3 +393,50 @@ ORDER BY id;
 SELECT id, member_id, title, body
 FROM jdbc_post
 ORDER BY id;
+
+# 2026-10-02
+# Commit - sql 작업이 성공하면, 반영하는 것을 Commit 이라고 한다.
+# Auto Commit - 작업이 성공하면, 자동으로 반영이 된다.
+
+# 데이터베이스의 쿼리를 가장 작은 단위의 업무로 쪼갠 것을 트랜잭션(Transaction)이라고 부른다.
+# 트랜잭션은 4가지 속성을 가지며, 이들의 앞글자를 딴 축약어인 ACID로 표현한다. 각 속성과 설명은 다음과 같다.
+# • Atomicity (원자성)
+# 모든 트랜잭션은 완전히 실행되거나(all), 아예 실행되지 않아야 한다(nothing).
+# 다시 말해, 진행되다 정지한 트랜잭션은 존재할 수 없다.
+# 이는 트랜잭션이 가장 작은 단위의 업무이기 때문이다.
+# • Consistency (일관성)
+# 같은 DB에 트랜잭션을 실행한 결과는 언제나 같아야 한다.
+# 여러 트랜잭션을 순서대로(serial) 실행하는 것과 병렬적으로(concurrent) 실행하는 것이
+# 같은 결과를 내야함을 강조할 때 주로 사용되는 속성이다.
+# • Isolation (고립성)
+# 모든 트랜잭션은 다른 트랜잭션에 의해 영향을 받아서는 안된다.
+# 트랜잭션의 병렬 처리를 조정하는 concurrent control은 주로 각 트랜잭션의 고립성 확보에 중점을 두고 있다.
+# • Durability (지속성,내구성)
+# 성공한 트랜잭션의 결과는 안정적으로 보존되어야 한다.
+# 원자성에 근거해 완벽히 실행된(commit) 트랜잭션은 그 결과를 비휘발성 저장장치에 저장하는 형태로 보존해야 하며,
+# 트랜잭션을 처리하는 프로그램은 이를 보장해야 한다.
+
+DROP TABLE IF EXISTS tray;
+CREATE TABLE tray (
+    item VARCHAR(20)
+);
+
+START TRANSACTION; # 트랜잭션 시작입니다.
+INSERT INTO tray (item) VALUES ('kimbap');
+SELECT item FROM tray;
+ROLLBACK;
+SELECT item FROM tray;
+
+START TRANSACTION;
+INSERT INTO tray (item) VALUES ('rollback-item');
+ROLLBACK;
+
+START TRANSACTION;
+INSERT INTO tray (item) VALUES ('commit-item');
+COMMIT;
+
+SELECT item FROM tray ORDER BY item;
+SELECT login_id FROM jdbc_member ORDER BY id;
+
+DELETE FROM tray WHERE item = 'commit-item';
+SELECT item FROM tray ORDER BY item;
