@@ -12,10 +12,15 @@ public class JdbcPostWorkflow {
 
     public static void main(String[] args) throws SQLException {
 
+        // Connection conn = DriverManager.getConnection(URL, USER, PASS)
+        // JDBC DriverManager를 이용하여 Connection 해준 것.
         try (Connection conn = DriverManager.getConnection(URL, USER, PASS)){
             // 1. 글을 쓸 회원. id가 가장 작은 1명. 없으면 여기서 종료.
             int memberId;
             String sql = "SELECT id FROM jdbc_member ORDER BY id LIMIT 1;";
+
+            // PreparedStatement는 Java JDBC에서 SQL 쿼리문을 미리 컴파일하고 실행하기 위해 사용하는 인터페이스
+            // executeQuery()는 JDBC에서 데이터베이스의 SELECT 문을 실행하여 결과를 조회할 때 사용하는 메서드
             try (PreparedStatement ps = conn.prepareStatement(sql);
                  ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) {
